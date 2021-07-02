@@ -29,27 +29,30 @@ servers:
     description: Hosting Server
 paths:
   /Manifest/Query:
-    $ref: paths/path-item-with-examples.yaml
     get:
+      tags: []
       summary: Query
       operationId: Query
       responses:
         '200':
           $ref: '#/components/responses/Manifest-Query-Response'
       description: Returns all "Manifest" record from the weighbridge manifest.
-      parameters: []
-    parameters: []
   '/Manifest/Find/{Uid}':
     get:
-      summary: Your GET endpoint
+      summary: Find
       tags: []
       responses:
         '200':
           $ref: '#/components/responses/Manifest-Found-Response'
-      operationId: get-Manifest-Find
+      operationId: Find
       description: 'Finds & Returns a single "Manifest" record from the weighbridge manifest with the given {Uid} parameter.'
     parameters:
-      - $ref: '#/components/parameters/UID'
+      - name: Uid
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The unique identity of the record
   '/Manifest/Exist/{Uid}':
     get:
       summary: Exist
