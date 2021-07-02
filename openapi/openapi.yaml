@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
-  version: 1.0.0
-  title: Example.com
+  version: '1.0'
+  title: BridgeLink API
   termsOfService: 'https://example.com/terms/'
   contact:
     email: contact@example.com
@@ -11,8 +11,7 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
   x-logo:
     url: 'https://redocly.github.io/openapi-template/logo.png'
-  description:
-    $ref: ./info-description.md
+  description: ''
 externalDocs:
   description: Find out how to create a GitHub repo for your OpenAPI definition.
   url: 'https://github.com/Rebilly/generator-openapi-repo'
@@ -24,31 +23,314 @@ tags:
   - name: Tag
     description: This is a tag description.
 servers:
-  - url: 'http://example.com/api/v1'
-  - url: 'https://example.com/api/v1'
+  - url: 'http://[localhost]:5001/BridgeLink/2.0'
+    description: Local Host
+  - url: 'http://[ServerIP]:5001/BridgeLink/2.0'
+    description: Hosting Server
 paths:
-  '/users/{username}':
-    $ref: 'paths/users@{username}.yaml'
-  /echo:
-    $ref: paths/echo.yaml
-  /pathItem:
-    $ref: paths/path-item.yaml
-  /pathItemWithExamples:
+  /Manifest/Query:
     $ref: paths/path-item-with-examples.yaml
+    get:
+      summary: Query
+      operationId: Query
+      responses:
+        '200':
+          $ref: '#/components/responses/Manifest-Query-Response'
+      description: Returns all "Manifest" record from the weighbridge manifest.
+      parameters: []
+    parameters: []
+  '/Manifest/Find/{Uid}':
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Manifest-Found-Response'
+        '415':
+          description: Unsupported Media Type
+      operationId: get-Manifest-Find
+      description: 'Finds & Returns a single "Manifest" record from the weighbridge manifest with the given {Uid} parameter.'
+    parameters:
+      - $ref: '#/components/parameters/UID'
+  '/Manifest/Exist/{Uid}':
+    get:
+      summary: Exist
+      tags: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Manifest-Exist-Response'
+        '415':
+          description: Unsupported Media Type
+      operationId: Exist
+      description: 'Returns a Indication on whether or not a "Manifest" entry with the given {Uid} parameter exist.'
+      parameters: []
+    parameters:
+      - $ref: '#/components/parameters/UID'
+  /Manifest/Create:
+    parameters: []
+    post:
+      summary: Create
+      operationId: post-Manifest-Create
+      responses:
+        '201':
+          $ref: '#/components/responses/Manifest-Created-Response'
+      description: Creates a new "Manifest" record in weighbridge manifest.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Query-Create-Data-Schema'
+  /Manifest/Update:
+    put:
+      summary: Update
+      operationId: put-Manifest-Update
+      responses:
+        '200':
+          $ref: '#/components/responses/Manifest-Updated-Response'
+        '415':
+          description: Unsupported Media Type
+      description: 'Updates a single "Manifest" record in the weighbridge manifest with the given {Uid} parameter'
+    parameters: []
+  '/Manifest/Delete/{Uid}':
+    parameters:
+      - $ref: '#/components/parameters/UID'
+    delete:
+      summary: Delete
+      operationId: delete-Manifest-Delete-Uid
+      responses:
+        '200':
+          $ref: '#/components/responses/Manifest-Deleted-Response'
+        '415':
+          description: Unsupported Media Type
+      description: 'Permanently removes a "Manifest" record from the weighbridge manifest with the given {Uid} parameter'
 components:
-  securitySchemes:
-    main_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: 'http://example.com/api/oauth/dialog'
-          scopes:
-            'read:users': read users info
-            'write:users': modify or remove users
-    api_key:
-      type: apiKey
-      in: header
-      name: api_key
-    basic_auth:
-      type: http
-      scheme: basic
+  securitySchemes: {}
+  schemas:
+    Manifest-Create-Data-Schema:
+      description: ''
+      type: object
+      x-examples:
+        Example:
+          Client:
+            Uid: 1
+            Tid: 1
+            Urf: 21182_D178BC/01
+            Name: Altrade
+          Hauler:
+            Uid: 1
+            Tid: 1
+            Name: Oscar NYANGE LUBISHI
+            ContactNumber: null
+            PassportNumber: null
+            DriversLicenseNumber: AA0022923KT
+          Haulier:
+            Uid: 1
+            Tid: 1
+            Urf: null
+            Type: TRI-AXLE
+            Size: 80 Tonner
+            VehicleLp: null
+            PritrailerLp: null
+            SectrailerLp: null
+            AxlesLayout: '11223'
+          Commodity:
+            Uid: 1
+            Tid: 1
+            Name: 'Copper Con          '
+            Lotnumber: '21182_7_BLK_1       '
+            Discription: null
+          Transaction:
+            Uid: 1
+            Tid: 1
+            Completed: true
+            EntryDate: null
+            EntryTime: null
+            EntryScaleId: null
+            ExitDate: null
+            ExitTime: null
+            ExitScaleId: null
+            Gross: 0
+            Nett: 0
+            Tare: 0
+            ScaleMode: null
+            CreatedBy: null
+          value:
+            Status: New
+            Query:
+              Client:
+                Urf: N/A
+                Name: Altrade
+              Hauler:
+                Name: Oscar NYANGE LUBISHI
+                ContactNumber: N/A
+                PassportNumber: N/A
+                DriversLicenseNumber: AA0022923KT
+              Haulier:
+                Urf: 21182_D178BC/01
+                Type: Tri-Axle
+                Size: 80 Tonner
+                VehicleLp: 01788C/01
+                PRITrailerLP: N/A
+                SECTrailerLP: N/A
+                AxlesLayout: '11223'
+              Commodity:
+                Name: Copper Con
+                LotNumber: 21182_7_BLK_1
+                Discription: Copper Conc
+            queriedBy: Masskot
+      title: ''
+      properties:
+        Client:
+          type: object
+          properties:
+            Urf:
+              type: string
+              minLength: 0
+              maxLength: 50
+            Name:
+              type: string
+              minLength: 0
+              maxLength: 50
+        Hauler:
+          type: object
+          properties:
+            Name:
+              type: string
+              minLength: 0
+              maxLength: 50
+            ContactNumber:
+              type: string
+              maxLength: 20
+              minLength: 0
+            PassportNumber:
+              type: string
+              minLength: 0
+              maxLength: 50
+            DriversLicenseNumber:
+              type: string
+              minLength: 0
+              maxLength: 50
+        Haulier:
+          type: object
+          properties:
+            Urf:
+              type: string
+              minLength: 0
+              maxLength: 50
+            Type:
+              type: string
+              minLength: 0
+              maxLength: 50
+            Size:
+              type: string
+              minLength: 0
+              maxLength: 50
+            VehicleLp:
+              type: string
+              minLength: 0
+              maxLength: 50
+            PritrailerLp:
+              type: string
+              minLength: 0
+              maxLength: 50
+            SectrailerLp:
+              type: string
+              minLength: 0
+              maxLength: 50
+            AxlesLayout:
+              type: string
+              minLength: 0
+              maxLength: 10
+        Commodity:
+          type: object
+          properties:
+            Name:
+              type: string
+              minLength: 0
+              maxLength: 20
+            Lotnumber:
+              type: string
+              minLength: 0
+              maxLength: 20
+            Discription:
+              type: string
+              minLength: 0
+              maxLength: 50
+    Query-Create-Data-Schema:
+      description: ''
+      type: object
+      x-examples:
+        example-1:
+          status: null
+          query: {}
+          queriedBy: Masskot
+      properties:
+        status:
+          type: string
+        query:
+          $ref: '#/components/schemas/Manifest-Create-Data-Schema'
+        queriedBy:
+          type: string
+          minLength: 1
+      required:
+        - status
+        - query
+        - queriedBy
+  responses:
+    Manifest-Deleted-Response:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            properties:
+              id:
+                type: string
+    Manifest-Query-Response:
+      description: Returns all "Manifest" records.
+      content:
+        application/json:
+          schema:
+            properties:
+              id:
+                type: string
+    Manifest-Found-Response:
+      description: 'Returns a "Manifest" record with the given {Uid} parameter.'
+      content:
+        application/json:
+          schema:
+            properties:
+              id:
+                type: string
+    Manifest-Exist-Response:
+      description: Returns the "Manifest" existance validator.
+      content:
+        application/json:
+          schema:
+            properties:
+              id:
+                type: string
+    Manifest-Updated-Response:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            properties:
+              id:
+                type: string
+    Manifest-Created-Response:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            properties:
+              id:
+                type: string
+  parameters:
+    UID:
+      name: Uid
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The unique identity of the record
+  examples: {}
