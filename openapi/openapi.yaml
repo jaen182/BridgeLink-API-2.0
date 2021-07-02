@@ -11,7 +11,7 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
   x-logo:
     url: 'https://redocly.github.io/openapi-template/logo.png'
-  description: ''
+  description: Documentation of the Self-Host Bridge-Link API.
 externalDocs:
   description: Find out how to create a GitHub repo for your OpenAPI definition.
   url: 'https://github.com/Rebilly/generator-openapi-repo'
@@ -100,7 +100,10 @@ paths:
           $ref: '#/components/responses/Manifest-Deleted-Response'
       description: 'Permanently removes a "Manifest" record from the weighbridge manifest with the matching {Uid} parameter'
 components:
-  securitySchemes: {}
+  securitySchemes:
+    API Key - 1:
+      type: http
+      scheme: basic
   schemas:
     Manifest-Create-Data-Schema:
       description: ''
