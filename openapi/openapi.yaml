@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: '1.0'
+  version: '2.0'
   title: BridgeLink API
   termsOfService: 'https://example.com/terms/'
   contact:
@@ -46,8 +46,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Manifest-Found-Response'
-        '415':
-          description: Unsupported Media Type
       operationId: get-Manifest-Find
       description: 'Finds & Returns a single "Manifest" record from the weighbridge manifest with the given {Uid} parameter.'
     parameters:
@@ -73,13 +71,15 @@ paths:
       operationId: post-Manifest-Create
       responses:
         '201':
-          $ref: '#/components/responses/Manifest-Created-Response'
-      description: Creates a new "Manifest" record in weighbridge manifest.
+          $ref: '#/components/responses/Manifest-Query-Response'
+      description: Create a single "Manifest" record in the weighbridge manifest
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Query-Create-Data-Schema'
+            examples: {}
+        description: ''
   /Manifest/Update:
     put:
       summary: Update
@@ -87,8 +87,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Manifest-Updated-Response'
-        '415':
-          description: Unsupported Media Type
       description: 'Updates a single "Manifest" record in the weighbridge manifest with the given {Uid} parameter'
     parameters: []
   '/Manifest/Delete/{Uid}':
@@ -100,84 +98,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Manifest-Deleted-Response'
-        '415':
-          description: Unsupported Media Type
-      description: 'Permanently removes a "Manifest" record from the weighbridge manifest with the given {Uid} parameter'
+      description: 'Permanently removes a "Manifest" record from the weighbridge manifest with the matching {Uid} parameter'
 components:
   securitySchemes: {}
   schemas:
     Manifest-Create-Data-Schema:
       description: ''
       type: object
-      x-examples:
-        Example:
-          Client:
-            Uid: 1
-            Tid: 1
-            Urf: 21182_D178BC/01
-            Name: Altrade
-          Hauler:
-            Uid: 1
-            Tid: 1
-            Name: Oscar NYANGE LUBISHI
-            ContactNumber: null
-            PassportNumber: null
-            DriversLicenseNumber: AA0022923KT
-          Haulier:
-            Uid: 1
-            Tid: 1
-            Urf: null
-            Type: TRI-AXLE
-            Size: 80 Tonner
-            VehicleLp: null
-            PritrailerLp: null
-            SectrailerLp: null
-            AxlesLayout: '11223'
-          Commodity:
-            Uid: 1
-            Tid: 1
-            Name: 'Copper Con          '
-            Lotnumber: '21182_7_BLK_1       '
-            Discription: null
-          Transaction:
-            Uid: 1
-            Tid: 1
-            Completed: true
-            EntryDate: null
-            EntryTime: null
-            EntryScaleId: null
-            ExitDate: null
-            ExitTime: null
-            ExitScaleId: null
-            Gross: 0
-            Nett: 0
-            Tare: 0
-            ScaleMode: null
-            CreatedBy: null
-          value:
-            Status: New
-            Query:
-              Client:
-                Urf: N/A
-                Name: Altrade
-              Hauler:
-                Name: Oscar NYANGE LUBISHI
-                ContactNumber: N/A
-                PassportNumber: N/A
-                DriversLicenseNumber: AA0022923KT
-              Haulier:
-                Urf: 21182_D178BC/01
-                Type: Tri-Axle
-                Size: 80 Tonner
-                VehicleLp: 01788C/01
-                PRITrailerLP: N/A
-                SECTrailerLP: N/A
-                AxlesLayout: '11223'
-              Commodity:
-                Name: Copper Con
-                LotNumber: 21182_7_BLK_1
-                Discription: Copper Conc
-            queriedBy: Masskot
+      x-examples: {}
       title: ''
       properties:
         Client:
@@ -259,11 +187,7 @@ components:
     Query-Create-Data-Schema:
       description: ''
       type: object
-      x-examples:
-        example-1:
-          status: null
-          query: {}
-          queriedBy: Masskot
+      x-examples: {}
       properties:
         status:
           type: string
@@ -276,55 +200,233 @@ components:
         - status
         - query
         - queriedBy
+    Query-Data-Schema:
+      description: ''
+      type: object
+      x-examples: {}
+      properties:
+        uid:
+          type: integer
+        tid:
+          type: integer
+        status:
+          type: string
+        query:
+          $ref: '#/components/schemas/Manifest-Create-Data-Schema'
+        queriedBy:
+          type: string
+          minLength: 1
+      required:
+        - status
+        - query
+        - queriedBy
+    Manifest-Data-Schema:
+      description: ''
+      type: object
+      x-examples: {}
+      properties:
+        client:
+          type: object
+          properties:
+            Uid:
+              type: integer
+              readOnly: true
+            Tid:
+              type: integer
+              readOnly: true
+            URF:
+              type: string
+              minLength: 1
+              readOnly: true
+            Name:
+              type: string
+              minLength: 1
+          readOnly: true
+        hauler:
+          type: object
+          properties:
+            Uid:
+              type: integer
+            Tid:
+              type: integer
+            Name:
+              type: string
+              minLength: 1
+            ContactNumber:
+              type: string
+            PassportNumber:
+              type: string
+            DriversLicenseNumber:
+              type: string
+              minLength: 1
+        haulier:
+          type: object
+          properties:
+            Uid:
+              type: integer
+            Tid:
+              type: integer
+            URF:
+              type: string
+            Type:
+              type: string
+              minLength: 1
+            Size:
+              type: string
+              minLength: 1
+            VehicleLP:
+              type: string
+            PRITrailerLP:
+              type: string
+            SECTrailerLP:
+              type: string
+            AxlesLayout:
+              type: string
+              minLength: 1
+        commodity:
+          type: object
+          properties:
+            Uid:
+              type: integer
+            Tid:
+              type: integer
+            Name:
+              type: string
+              minLength: 1
+            LotNumber:
+              type: string
+              minLength: 1
+            Discription:
+              type: string
+        transaction:
+          type: object
+          properties:
+            Uid:
+              type: integer
+            Tid:
+              type: integer
+            Completed:
+              type: boolean
+            EntryDate:
+              type: string
+            EntryTime:
+              type: string
+            EntryScaleID:
+              type: string
+            ExitDate:
+              type: string
+            ExitTime:
+              type: string
+            ExitScaleID:
+              type: string
+            Gross:
+              type: integer
+            Nett:
+              type: integer
+            Tare:
+              type: integer
+            ScaleMode:
+              type: string
+            CreatedBy:
+              type: string
   responses:
     Manifest-Deleted-Response:
-      description: Example response
+      description: Responds with the deleted "Manifest" record.
       content:
         application/json:
           schema:
-            properties:
-              id:
-                type: string
+            $ref: '#/components/schemas/Query-Data-Schema'
+          examples: {}
     Manifest-Query-Response:
       description: Returns all "Manifest" records.
       content:
         application/json:
           schema:
-            properties:
-              id:
-                type: string
+            $ref: '#/components/schemas/Query-Data-Schema'
     Manifest-Found-Response:
-      description: 'Returns a "Manifest" record with the given {Uid} parameter.'
+      description: 'Returns a "Manifest" record with the matching {Uid} parameter.'
       content:
         application/json:
           schema:
-            properties:
-              id:
-                type: string
+            $ref: '#/components/schemas/Manifest-Data-Schema'
+          examples: {}
     Manifest-Exist-Response:
       description: Returns the "Manifest" existance validator.
       content:
         application/json:
           schema:
+            description: ''
+            type: object
+            x-examples:
+              example-1:
+                exist: true
             properties:
-              id:
-                type: string
+              exist:
+                type: boolean
+                default: false
+          examples:
+            Response Example:
+              value:
+                exist: false
     Manifest-Updated-Response:
-      description: Example response
+      description: Returns the updated "Manifest" record.
       content:
         application/json:
           schema:
-            properties:
-              id:
-                type: string
+            $ref: '#/components/schemas/Manifest-Data-Schema'
+          examples:
+            Response Example:
+              value:
+                client:
+                  Uid: 0
+                  Tid: 0
+                  URF: string
+                  Name: string
+                hauler:
+                  Uid: 0
+                  Tid: 0
+                  Name: string
+                  ContactNumber: string
+                  PassportNumber: string
+                  DriversLicenseNumber: string
+                haulier:
+                  Uid: 0
+                  Tid: 0
+                  URF: string
+                  Type: string
+                  Size: string
+                  VehicleLP: string
+                  PRITrailerLP: string
+                  SECTrailerLP: string
+                  AxlesLayout: string
+                commodity:
+                  Uid: 0
+                  Tid: 0
+                  Name: string
+                  LotNumber: string
+                  Discription: string
+                transaction:
+                  Uid: 0
+                  Tid: 0
+                  Completed: true
+                  EntryDate: string
+                  EntryTime: string
+                  EntryScaleID: string
+                  ExitDate: string
+                  ExitTime: string
+                  ExitScaleID: string
+                  Gross: 0
+                  Nett: 0
+                  Tare: 0
+                  ScaleMode: string
+                  CreatedBy: string
     Manifest-Created-Response:
       description: Example response
       content:
         application/json:
           schema:
-            properties:
-              id:
-                type: string
+            $ref: '#/components/schemas/Manifest-Data-Schema'
+          examples: {}
   parameters:
     UID:
       name: Uid
